@@ -4,6 +4,7 @@ Imports ConsoleGUI
 Imports System.Reflection
 Imports System.ComponentModel.Composition.Hosting
 Imports System.IO
+Imports System.Windows.Forms
 
 Module App
     Public TheWorkspace As QuickVBWorkspace
@@ -20,6 +21,21 @@ Module App
         Dim projectId = TheWorkspace.CreateProject("Untitled", "Untitled.exe")
         Dim documentId = TheWorkspace.CreateDocument(projectId, "Untitled.vb")
     End Sub
+
+    Public Function OpenWorkspace() As String
+        Dim ofd As New OpenFileDialog
+        ofd.Filter = "Basic files (*.vb;*.bas)|*.vb;*.bas|All files (*.*)|*.*"
+        ofd.FilterIndex = 1
+        ofd.RestoreDirectory = False
+        If ofd.ShowDialog() <> DialogResult.OK Then Return Nothing
+
+        TheWorkspace = New QuickVBWorkspace()
+        Dim nameWithoutExt = IO.Path.GetFileNameWithoutExtension(ofd.FileName)
+        Dim nameWithExt = IO.Path.GetFileName(ofd.FileName)
+        Dim projectId = TheWorkspace.CreateProject(nameWithoutExt, nameWithoutExt & ".exe")
+        Dim documentId = TheWorkspace.CreateDocument(projectId, nameWithExt)
+        Return ofd.FileName
+    End Function
 
     Public Sub LoadSelfWorkspace()
         TheWorkspace = New QuickVBWorkspace()

@@ -97,7 +97,13 @@ Public Class MyScreen
         FileMenu.DropDownMenu = True
         FileMenu.SetMenuItems(New MenuItem() {
             New MenuItem(Name:="&New Program"),
-            New MenuItem(Name:="&Open Program..."),
+            New MenuItem(Name:="&Open Program...", Action:=Sub()
+                                                               Dim fn = App.OpenWorkspace()
+                                                               If fn Is Nothing Then Return
+                                                               SetStatus(Nothing, False)
+                                                               Dim txt = IO.File.ReadAllText(fn)
+                                                               ViewDocument(DocumentBufferView, DocumentPane, IO.Path.GetFileNameWithoutExtension(fn), IO.Path.GetFileName(fn), txt)
+                                                           End Sub),
             New MenuItem(Name:="Open &Self", Action:=Sub()
                                                          App.LoadSelfWorkspace()
                                                          SetStatus(Nothing, False)
@@ -290,7 +296,7 @@ Public Class MyScreen
             Exit Sub
         End Try
 
-        If documentName.EndsWith(".vb") Then
+        If documentName.EndsWith(".vb") OrElse documentName.EndsWith(".bas") Then
             Console.Title = "QuickVB"
             Me.Theme = ControlTheme.Basic
             DocumentBufferView.ForegroundColor = ConsoleColor.Gray

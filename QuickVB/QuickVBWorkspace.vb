@@ -21,8 +21,16 @@ Public Class QuickVBWorkspace
         Dim projId = ProjectId.CreateNewId(name)
         Dim metadataReferences = {New MetadataFileReference(GetType(Object).Assembly.Location),
                                   New MetadataFileReference(GetType(Microsoft.VisualBasic.Constants).Assembly.Location),
-                                  New MetadataFileReference(GetType(System.Linq.Enumerable).Assembly.Location)}
+                                  New MetadataFileReference(GetType(System.Collections.Generic.Queue(Of)).Assembly.Location),
+                                  New MetadataFileReference(GetType(System.Linq.Enumerable).Assembly.Location),
+                                  New MetadataFileReference(GetType(System.Windows.Forms.Form).Assembly.Location),
+                                  New MetadataFileReference(GetType(System.Drawing.Brush).Assembly.Location)}
+        Dim opts As New VisualBasic.VisualBasicCompilationOptions(OutputKind.ConsoleApplication,
+                                                                  globalImports:=VisualBasic.GlobalImport.Parse({"System", "Microsoft.VisualBasic"}),
+                                                                  optionExplicit:=False,
+                                                                  platform:=Platform.AnyCpu32BitPreferred)
         Dim projInfo = ProjectInfo.Create(projId, VersionStamp.Default, name, assemblyName, LanguageNames.VisualBasic,
+                                          compilationOptions:=opts,
                                           metadataReferences:=metadataReferences)
         Me.OnProjectAdded(projInfo)
         Return projId
